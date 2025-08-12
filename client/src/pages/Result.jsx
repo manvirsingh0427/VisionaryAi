@@ -7,8 +7,12 @@ const Result = () => {
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState('')
 
+  const onSubmitHandler = async(e)=>{
+
+  }
+
   return (
-    <form className='flex flex-col min-h-[90vh] items-center justify-center' action="">
+    <form onSubmit={onSubmitHandler} className='flex flex-col min-h-[90vh] items-center justify-center' action="">
     <div>
       <div className='relative'>
          <img className='max-w-sm rounded' src={image} alt="" />
