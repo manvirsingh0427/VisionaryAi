@@ -10,45 +10,42 @@ const Login = () => {
   const {setShowLogin, backendUrl, setToken, setUser} = useContext(Appcontext);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [passoword, setPassword] = useState('');
+  const [password, setPassword] = useState('');
 
 
-  const onSubmitHandler = async(e)=>{
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     try {
-      if(state == 'Login'){
-        const data = await axios.post(backendUrl + '/api/user/login', {email, passoword})
-        if(data.success){
-            setToken(data.token)
-            setUser(data.user)
-            localStorage.getItem('token', data.token)
-            setShowLogin(false)
-        }
+      if (state === 'Login') {
+        const res = await axios.post(backendUrl + '/api/user/login', { email, password });
 
-        else{
-          toast.error(data.message)
+        if (res.data.success) {
+          setToken(res.data.token);
+          setUser(res.data.user);
+          localStorage.setItem('token', res.data.token);
+          setShowLogin(false);
+        } else {
+          toast.error(res.data.message);
         }
-      }
+      } else {
+        const res = await axios.post(backendUrl + '/api/user/register', { name, email, password });
 
-      else{
-        const data = await axios.post(backendUrl + '/api/user/register', {name, email, passoword})
-        if(data.success){
-            setToken(data.token)
-            setUser(data.user)
-            localStorage.getItem('token', data.token)
-            setShowLogin(false)
-        }
-
-        else{
-          toast.error(data.message)
+        if (res.data.success) {
+          setToken(res.data.token);
+          setUser(res.data.user);
+          localStorage.setItem('token', res.data.token);
+          setShowLogin(false);
+        } else {
+          toast.error(res.data.message);
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
-  }
-  
+  };
+
+    
   useEffect(()=>{
       document.body.style.overflow = 'hidden';
       return ()=>{
@@ -81,7 +78,7 @@ const Login = () => {
 
         <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-5'>
             <img src={assets.lock_icon} alt="" />
-            <input onChange={e => setPassword(e.target.value)} value = {passoword} className='outline-none text-sm' type="password" placeholder='Password' required/>
+            <input onChange={e => setPassword(e.target.value)} value = {password} className='outline-none text-sm' type="password" placeholder='Password' required/>
         </div>
 
         <p className='text-sm text-blue-600 my-4 cursor-pointer'>Forgot Password</p>

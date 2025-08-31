@@ -12,7 +12,7 @@ const AppContextProvider = (props) =>{
      const backendUrl = import.meta.env.VITE_BACKEND_URL;
      const loadCreditsData = async()=>{
       try{
-         const {data} = await axios.get(backendUrl+'api/user/credits', {headers:{token}})
+         const {data} = await axios.get(backendUrl+'/api/user/credits', {headers:{token}})
 
          if(data.success){
             setCredit(data.credits)
@@ -24,9 +24,21 @@ const AppContextProvider = (props) =>{
          toast.error(error.message)
       }
      }
+
+     const logout = ()=>{
+       localStorage.removeItem('token')
+       setToken('')
+       setUser(null)
+     }
+
+     useEffect(()=>{
+        if(token){
+         loadCreditsData();
+        }
+     }, [token])
      
      const value = {
-        user, setUser, showLogin, setShowLogin, backendUrl, token, setToken, credit, setCredit
+        user, setUser, showLogin, setShowLogin, backendUrl, token, setToken, credit, setCredit, loadCreditsData, logout
      }
 
      return (
