@@ -1,6 +1,7 @@
 import axios from "axios";
 import { createContext, useEffect } from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 export const Appcontext = createContext()
 
@@ -9,6 +10,7 @@ const AppContextProvider = (props) =>{
      const [showLogin, setShowLogin] = useState(false);
      const [token, setToken] = useState(localStorage.getItem('token'))
      const [credit, setCredit] = useState(false);
+     const navigate = useNavigate()
      const backendUrl = import.meta.env.VITE_BACKEND_URL;
      const loadCreditsData = async()=>{
       try{
@@ -23,6 +25,28 @@ const AppContextProvider = (props) =>{
          console.log(error)
          toast.error(error.message)
       }
+     }  
+
+     const generateImage = async (prompt)=>{
+         try{
+           const {data} = await axios.post(backendUrl + '/api/image/generate-image', {prompt}, {headers:{token}});
+
+           if(data.success){
+            loadCreditsData()
+            return data.resultImage;
+           }
+
+           else{
+            toast.error(data.message);
+           }
+         }
+         catch(error){
+            toast.error(error.message);
+            loadCreditsData();
+            if(data.creditBalance === 0){
+                 navigate('/buy');
+            }
+         }
      }
 
      const logout = ()=>{
@@ -38,7 +62,7 @@ const AppContextProvider = (props) =>{
      }, [token])
      
      const value = {
-        user, setUser, showLogin, setShowLogin, backendUrl, token, setToken, credit, setCredit, loadCreditsData, logout
+        user, setUser, showLogin, setShowLogin, backendUrl, token, setToken, credit, setCredit, loadCreditsData, logout, generateImage
      }
 
      return (
